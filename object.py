@@ -11,12 +11,12 @@ BLUE = (0, 0, 255)
 
 
 class Object:
-    def __init__(self, name, env, color, pos, radius) -> None:
+    def __init__(self, name, env, color, position, orientation_angle) -> None:
         self.name = name
         self.env = env
         self.color = color
-        self.positon = pos
-        self.radius = radius
+        self.positon = position
+        self.orientation_angle = orientation_angle
 
     def show(self):
         ...
@@ -27,14 +27,8 @@ class Object:
 
 class CircleObject(Object):
     def __init__(self, name, env, color, pos, radius) -> None:
-        super().__init__(name, env, color, pos, radius)
-
-    def show(self):
-        pygame.draw.circle(self.env.screen, self.color,
-                           self.positon, self.radius)
-
-    def state_update(self):
-        ...
+        super().__init__(name, env, color, pos)
+        self.radius = radius
 
 
 class RectObject(Object):
@@ -47,19 +41,105 @@ class RectObject(Object):
         pygame.draw.rect(self.env.screen, self.color,
                          (self.positon[0], self.positon[1], self.width, self.height))
 
-    def state_update(self):
-        ...
+    def update_state(self):
+        # 更新速度
+        if key == 0:
+            self.vl += self.a*DELTA_T
+            self.vr += self.a*DELTA_T
+        if key == 1:
+            self.vl -= self.a*DELTA_T
+            self.vr -= self.a*DELTA_T
+        if key == 2:
+            self.vr += self.a*DELTA_T
+        if key == 3:
+            self.vl += self.a*DELTA_T
+        if key == 4:
+            pass
+
+        # 限制速度不超过最大速度
+        if self.vl >= self.vm:
+            self.vl = self.vm
+        if self.vl < 0:
+            self.vl = 0
+        if self.vr >= self.vm:
+            self.vr = self.vm
+        if self.vr < 0:
+            self.vr = 0
+
+        self.vc = (self.vl + self.vr) / 2
+        self.w = (self.vr - self.vl) / self.radius
+
+        # 更新位置
+        vc, theta = self.vc, self.theta
+        self.pos[0] += vc * math.cos(theta) * DELTA_T
+        self.pos[1] -= vc * math.sin(theta) * DELTA_T
+
+        # 限制新位置在屏幕内
+        if self.pos[0] <= 0:
+            self.pos[0] = 0
+        if self.pos[0] >= self.screen_width:
+            self.pos[0] = self.screen_width
+        if self.pos[1] <= 0:
+            self.pos[1] = 0
+        if self.pos[1] >= self.screen_hight:
+            self.pos[1] = self.screen_hight
+
+        self.theta += self.w * DELTA_T
+        self.theta = normalize_angle(self.theta)
 
 
-# 初始化pygame
-pygame.init()
-# 设置屏幕大小
-screen_width = 800
-screen_height = 600
-screen = pygame.display.set_mode((screen_width, screen_height))
+class Robot(CircleObject):
+    def __init__(self, name, env, color, pos, radius) -> None:
+        super().__init__(name, env, color, pos, radius)
+        self.vm = 5
+        self.vl = 0
+        self.vr = 0
+        self.vc = (self.vl + self.vr) / 2
+        self.w = 0
+        self.a = 1
+
+        self.theta = 0
+        self.image_theta = 0
+
+    def update_state(self):
+        # 限制速度不超过最大速度
+        if self.vl >= self.vm:
+            self.vl = self.vm
+        if self.vl < 0:
+            self.vl = 0
+        if self.vr >= self.vm:
+            self.vr = self.vm
+        if self.vr < 0:
+            self.vr = 0
+
+        self.vc = (self.vl + self.vr) / 2
+        self.w = (self.vr - self.vl) / self.radius
+
+        # 更新位置
+        vc, theta = self.vc, self.theta
+        self.pos[0] += vc * math.cos(theta) * DELTA_T
+        self.pos[1] -= vc * math.sin(theta) * DELTA_T
+
+        # 限制新位置在屏幕内
+        if self.pos[0] <= 0:
+            self.pos[0] = 0
+        if self.pos[0] >= self.screen_width:
+            self.pos[0] = self.screen_width
+        if self.pos[1] <= 0:
+            self.pos[1] = 0
+        if self.pos[1] >= self.screen_hight:
+            self.pos[1] = self.screen_hight
+
+        self.theta += self.w * DELTA_T
+        self.theta = normalize_angle(self.theta)
+
+    # def show(self):
+    #     start_head = self.positon + self.radius * \
+    #         np.array([math.cos(self.theta), -math.sin(self.theta)])
+    #     pygame.draw.circle(self.env.screen, self.color,
+
 
 # 设置标题
-pygame.display.set_caption("2D Robot Game")
 robot_image = pygame.image.load("robot.png")
 original_width, original_height = robot_image.get_size()
 scaled_width = original_width // 8
@@ -69,7 +149,6 @@ robot_image = pygame.transform.scale(
 robot_image = robot_image.convert_alpha()  # 转换图片以提高渲染效率并保留透明度
 
 robot_image_rect = robot_image.get_rect()
-robot_image_rect.center = (screen_width // 2, screen_height // 2)
 
 DELTA_T = 1 / 10 * 5
 MAX_V = 5
