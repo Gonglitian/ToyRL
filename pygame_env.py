@@ -42,6 +42,8 @@ class PygameEnv(gymnasium.Env):
     def add_objects(self, *objects: Object):
         for obj in objects:
             self.obj_dict[obj.name] = obj
+            self.obj_dict[obj.name].env = self
+            self.obj_dict[obj.name].screen = self.screen
 
     def delete_object(self, obj: Object):
         del self.obj_dict[obj.name]

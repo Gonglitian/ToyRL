@@ -10,9 +10,11 @@ class Agent():
         self.model = model
 
         self.gamma = 0.95    # discount rate
-        self.epsilon = 1.0  # exploration rate
+        # exploration
+        self.epsilon = 1.0
         self.epsilon_min = 0.01
         self.epsilon_decay = 0.995
+        # learning
         self.learning_rate = 0.001
 
     def play(self, random=False, render=False):
@@ -27,22 +29,25 @@ class Agent():
                 else:
                     a = np.argmax(self.model.predict(s))
             ns, r, done, _ = self.env.step(a)
+            self.epsilon = max(
+                self.epsilon_min, self.epsilon * self.epsilon_decay)
             self.pool.add((s, a, r, ns, done))
             s = ns
             if render:
                 self.env.render()
-            
 
-
+    def learn(self):
+        ...
 
     def train(self):
         ...
 
+
 class DQNAgent(Agent):
-    def __init__(self, env: PygameEnv, model, pool: Pool):
-        super().__init__(env, model, pool)
+    def __init__(self, env: PygameEnv, model, config):
+        super().__init__(env, model)
         self.env = env
-        self.pool = pool
+        self.pool = Pool()
         self.gamma = 0.95    # discount rate
         self.epsilon = 1.0  # exploration rate
         self.epsilon_min = 0.01
