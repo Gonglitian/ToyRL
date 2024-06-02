@@ -496,7 +496,7 @@ class RobotDynamicEnv(gymnasium.Env):
         pygame.quit()
 
 
-def circle_to_circle_collision(circle1, circle2):
+def circle_to_circle_collision(circle1, circle2) -> tuple[float, bool]:
     distance = np.linalg.norm(circle1.pos - circle2.pos)
     return distance, distance <= (circle1.radius + circle2.radius)
 # check
