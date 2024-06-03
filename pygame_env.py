@@ -4,7 +4,7 @@ import pygame
 import numpy as np
 from numpy import ndarray
 import math
-from robot import Robot, Obstacle, Target
+# from robot import Robot, Obstacle, Target
 import random
 import gymnasium
 from gymnasium import spaces
@@ -33,7 +33,7 @@ class PygameEnv(gymnasium.Env):
         # 初始化对象字典
         self.obj_dict: dict[Object] = {}
         self.action_space = ...
-        self.observation_space = spaces.Box(...)
+        self.observation_space = ...
 
         # RL相关变量
         self.state = ...
@@ -66,6 +66,14 @@ class PygameEnv(gymnasium.Env):
         pass
 
     def render(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    return
         self.screen.fill((255, 255, 255))
         for obj in self.obj_dict.values():
             obj.show()
@@ -73,10 +81,6 @@ class PygameEnv(gymnasium.Env):
         pygame.display.flip()
 
     def action_parser(self, action):
-        pass
-
-    @property
-    def state():
         pass
 
 

@@ -38,7 +38,7 @@ class Object:
         self.v = 0
         self.w = 0
 
-    def state_update(self):
+    def update_state(self):
         ...
 
     def show(self):
@@ -118,8 +118,9 @@ class TwoWheelsRobot(CircleObject):
 class Obstacle(CircleObject):
     def __init__(self, name, color, radius, position=np.array([0, 0]), theta=0, v=0, a=0) -> None:
         super().__init__(name, color, radius, position, theta)
+        self.w = 1
 
-    def update_position(self):
+    def update_state(self):
         # 绕某个圆心做圆周运动
         self.position[0] = 200 + 50 * math.cos(self.theta)
         self.position[1] = 200 + 50 * math.sin(self.theta)
