@@ -75,11 +75,11 @@ class TwoWheelsRobot(CircleObject):
 
     def update_state(self):
         # 限制速度不超过最大速度
-        if self.vl >= self.vm:
+        if self.vl > self.vm:
             self.vl = self.vm
         if self.vl < 0:
             self.vl = 0
-        if self.vr >= self.vm:
+        if self.vr > self.vm:
             self.vr = self.vm
         if self.vr < 0:
             self.vr = 0
