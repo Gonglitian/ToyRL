@@ -1,3 +1,4 @@
+import types
 import pygame
 from pygame_env import PygameEnv
 from object import TwoWheelsRobot, Obstacle, Target
@@ -22,13 +23,27 @@ class RobotEnv(PygameEnv):
             low=0, high=255, shape=(self.screen.get_width(), self.screen.get_height(), 3), dtype=np.uint8)
 
     def reset(self):
-        self.robot.reset()
-        for obj in self.obj_dict.values():
-            obj.reset()
+        self.robot.position = np.array(
+            [np.random.randint(self.screen.get_width()), np.random.randint(self.screen.get_height())])
+        self.target.position = np.array(
+            [np.random.randint(self.screen.get_width()), np.random.randint(self.screen.get_height())])
+        self.obstacle.position = np.array(
+            [np.random.randint(self.screen.get_width()), np.random.randint(self.screen.get_height())])
         return self.get_state()
 
     def get_state(self):
-        return ...  # todo
+        return np.array(
+            [
+                self.robot.position[0],
+                self.robot.position[1],
+                self.target.position[0],
+                self.target.position[1],
+                self.robot.vl,
+                self.robot.vr,
+                self.robot.theta,
+                self.robot.target_distance,
+            ]
+        ).astype(np.float32)
 
     def step(self, action):
         self.handle_event()

@@ -2,8 +2,8 @@ import numpy as np
 import math
 import random
 import pygame
-from pygame_env import PygameEnv
-from pygame import Surface
+# from pygame_env import PygameEnv
+# from pygame import Surface
 # 颜色定义
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -27,8 +27,8 @@ MAX_V = 5
 
 class Object:
     def __init__(self, name, color, position=np.array([0, 0]), theta=0) -> None:
-        self.env: PygameEnv = None
-        self.screen: Surface = None
+        self.env = None
+        self.screen = None
         self.name = name
         self.color = color
         self.position = position
@@ -72,8 +72,11 @@ class TwoWheelsRobot(CircleObject):
         self.vm = vm
         self.vl = vl
         self.vr = vr
+        self.target_distance = 0
 
     def update_state(self):
+        self.target_distance = math.sqrt(
+            (self.position[0] - self.env.target.position[0])**2 + (self.position[1] - self.env.target.position[1])**2)
         # 限制速度不超过最大速度
         if self.vl > self.vm:
             self.vl = self.vm
