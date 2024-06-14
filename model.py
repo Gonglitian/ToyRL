@@ -1,4 +1,5 @@
 import torch.nn as nn
+
 # pytorch mlp model, can set the number of layers and the number of neurons in each layer
 
 
@@ -18,10 +19,9 @@ class MLP(nn.Module):
         self.layers.append(nn.Linear(hidden_dim, output_dim))
 
     def forward(self, x):
-        for i in range(len(self.layers)-1):
+        for i in range(len(self.layers) - 1):
             x = self.layers[i](x)
             x = nn.functional.relu(x)
-            x = nn.functional.dropout(
-                x, p=self.dropout, training=self.training)
+            x = nn.functional.dropout(x, p=self.dropout, training=self.training)
         x = self.layers[-1](x)
         return x

@@ -2,6 +2,7 @@ import numpy as np
 import math
 import random
 import pygame
+
 # from pygame_env import PygameEnv
 # from pygame import Surface
 # 颜色定义
@@ -38,11 +39,9 @@ class Object:
         self.v = 0
         self.w = 0
 
-    def update_state(self):
-        ...
+    def update_state(self): ...
 
-    def show(self):
-        ...
+    def show(self): ...
 
 
 class CircleObject(Object):
@@ -51,8 +50,7 @@ class CircleObject(Object):
         self.radius = radius
 
     def show(self):
-        pygame.draw.circle(self.screen, self.color,
-                           self.position, self.radius)
+        pygame.draw.circle(self.screen, self.color, self.position, self.radius)
 
 
 class RectObject(Object):
@@ -62,21 +60,29 @@ class RectObject(Object):
         self.height = height
 
     def show(self):
-        pygame.draw.rect(self.env.screen, self.color,
-                         (self.position[0], self.position[1], self.width, self.height))
+        pygame.draw.rect(
+            self.env.screen,
+            self.color,
+            (self.position[0], self.position[1], self.width, self.height),
+        )
 
 
 class TwoWheelsRobot(CircleObject):
-    def __init__(self, name, color, radius, position=np.array([0, 0]), theta=0, vm=0, vl=0, vr=0) -> None:
+    def __init__(
+        self, name, color, radius, position=np.array([0, 0]), theta=0, vm=0, vl=0, vr=0, a=0
+    ) -> None:
         super().__init__(name, color, radius, position, theta)
         self.vm = vm
         self.vl = vl
         self.vr = vr
+        self.a = a
         self.target_distance = 0
 
     def update_state(self):
         self.target_distance = math.sqrt(
-            (self.position[0] - self.env.target.position[0])**2 + (self.position[1] - self.env.target.position[1])**2)
+            (self.position[0] - self.env.target.position[0]) ** 2
+            + (self.position[1] - self.env.target.position[1]) ** 2
+        )
         # 限制速度不超过最大速度
         if self.vl > self.vm:
             self.vl = self.vm
@@ -109,17 +115,18 @@ class TwoWheelsRobot(CircleObject):
 
     def show(self):
         # 从圆心画一条线到机器人的前方，表示机器人的朝向
-        start_head = self.position + self.radius * \
-            np.array([math.cos(self.theta), -
-                     math.sin(self.theta)])
+        start_head = self.position + self.radius * np.array(
+            [math.cos(self.theta), -math.sin(self.theta)]
+        )
 
         pygame.draw.circle(self.screen, self.color, self.position, self.radius)
-        pygame.draw.line(self.screen, RED,
-                         self.position, start_head, 1)
+        pygame.draw.line(self.screen, RED, self.position, start_head, 1)
 
 
 class Obstacle(CircleObject):
-    def __init__(self, name, color, radius, position=np.array([0, 0]), theta=0, v=0, a=0) -> None:
+    def __init__(
+        self, name, color, radius, position=np.array([0, 0]), theta=0, v=0, a=0
+    ) -> None:
         super().__init__(name, color, radius, position, theta)
         self.w = 1
 
@@ -131,7 +138,9 @@ class Obstacle(CircleObject):
 
 
 class Target(CircleObject):
-    def __init__(self, name, color, radius, position=np.array([0, 0]), theta=0, v=0, a=0) -> None:
+    def __init__(
+        self, name, color, radius, position=np.array([0, 0]), theta=0, v=0, a=0
+    ) -> None:
         super().__init__(name, color, radius, position, theta)
 
 

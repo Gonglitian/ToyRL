@@ -5,13 +5,13 @@ import torch
 from config import *
 
 
-class Agent():
+class Agent:
     def __init__(self, env: PygameEnv, model: torch.nn.Module, config: DQNConfig):
         self.env = env
         self.pool = Pool()
         self.model = model
 
-        self.gamma = 0.95    # discount rate
+        self.gamma = 0.95  # discount rate
         # exploration
         self.epsilon = 1.0
         self.epsilon_min = 0.01
@@ -30,24 +30,29 @@ class Agent():
                 if np.random.rand() <= self.epsilon:
                     a = self.env.action_space.sample()
                 else:
-                    a = self.model(torch.FloatTensor(
-                        s).reshape(1, self.env.action_space.n)).argmax().item()
+                    a = (
+                        self.model(
+                            torch.FloatTensor(s).reshape(1, self.env.action_space.n)
+                        )
+                        .argmax()
+                        .item()
+                    )
             ns, r, done, info = self.env.step(a)
             reward_sum += r
-            self.epsilon = max(
-                self.epsilon_min, self.epsilon * self.epsilon_decay)
+            self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
             self.pool.add((s, a, r, ns, done))
             s = ns
             if render:
                 self.env.render()
         return reward_sum
 
-    def get_experience_tensor(self) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    def get_experience_tensor(
+        self,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         # todo test
         experience_batch = self.pool.sample()
         # 使用zip函数将经验分解为单独的列表
-        batch_s, batch_a, batch_r, batch_ns, batch_done = zip(
-            *experience_batch)
+        batch_s, batch_a, batch_r, batch_ns, batch_done = zip(*experience_batch)
 
         # 直接将列表转换为PyTorch张量
         batch_s = torch.tensor(batch_s, dtype=torch.float32)
@@ -59,15 +64,16 @@ class Agent():
         return batch_s, batch_a, batch_r, batch_ns, batch_done
 
     def train(self):
-        ...
+        return NotImplementedError
 
 
 class DQNAgent(Agent):
     def __init__(self, env: PygameEnv, model: torch.nn.Module, config: DQNConfig):
         super().__init__(env, model)
         self.env = env
-        self.pool = Pool(max_size=config.pool_max_size,
-                         batch_size=config.pool_batch_size)
+        self.pool = Pool(
+            max_size=config.pool_max_size, batch_size=config.pool_batch_size
+        )
         self.model = model
         self.config = config
         # training params

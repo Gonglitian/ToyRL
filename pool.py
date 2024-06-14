@@ -12,8 +12,9 @@ class Pool:
         self.buffer.append(experience)
 
     def sample(self):
-        idx = np.random.choice(np.arange(len(self.buffer)),
-                               size=self.batch_size, replace=False)
+        idx = np.random.choice(
+            np.arange(len(self.buffer)), size=self.batch_size, replace=False
+        )
         return [self.buffer[i] for i in idx]
 
     def __len__(self):

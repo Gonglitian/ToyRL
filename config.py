@@ -1,5 +1,31 @@
 class Config:
-    def __init__(self, env_name='CartPole-v1', n_episodes=1000, max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=0.995, gamma=0.99, lr=0.0005, seed=0, buffer_size=int(1e5), batch_size=64, update_every=4, tau=1e-3, n_hidden=64, n_hidden_layers=2, device='cpu', double_dqn=False, dueling_dqn=False, prioritized_replay=False, alpha=0.6, beta_start=0.4, beta_end=1.0, beta_decay=0.999, model_path='checkpoint.pth'):
+    def __init__(
+        self,
+        env_name="CartPole-v1",
+        n_episodes=1000,
+        max_t=1000,
+        eps_start=1.0,
+        eps_end=0.01,
+        eps_decay=0.995,
+        gamma=0.99,
+        lr=0.0005,
+        seed=0,
+        buffer_size=int(1e5),
+        batch_size=64,
+        update_every=4,
+        tau=1e-3,
+        n_hidden=64,
+        n_hidden_layers=2,
+        device="cpu",
+        double_dqn=False,
+        dueling_dqn=False,
+        prioritized_replay=False,
+        alpha=0.6,
+        beta_start=0.4,
+        beta_end=1.0,
+        beta_decay=0.999,
+        model_path="checkpoint.pth",
+    ):
         # Environment
         self.env_name = env_name
         # Training
@@ -35,7 +61,17 @@ class Config:
 
 class DQNConfig:
 
-    def __init__(self, pool_max_size=10_000, pool_batch_size=32, gamma=0.95, epsilon=1.0, epsilon_min=0.01, epsilon_decay=0.995, learning_rate=0.001, log_interval=100_000):
+    def __init__(
+        self,
+        pool_max_size=10_000,
+        pool_batch_size=32,
+        gamma=0.95,
+        epsilon=1.0,
+        epsilon_min=0.01,
+        epsilon_decay=0.995,
+        learning_rate=0.001,
+        log_interval=100_000,
+    ):
         # env
         self.pool_max_size = pool_max_size
         self.pool_batch_size = pool_batch_size
