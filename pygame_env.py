@@ -101,6 +101,8 @@ class PygameEnv(gymnasium.Env):
         distance = np.linalg.norm(circle1.position - circle2.position)
         return distance, distance <= (circle1.radius + circle2.radius)
 
+    def close(self):
+        pygame.quit()
 
 # check
 # env = RobotEnv(screen_width=400, screen_height=400)

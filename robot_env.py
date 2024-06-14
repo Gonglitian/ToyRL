@@ -49,7 +49,7 @@ class RobotEnv(PygameEnv):
         )
         self.observation_space = spaces.Box(
             low=low, high=high, dtype=np.float32)
-
+        self.DELTA_T = 0.5
         self.steps_count = 0
         # reset
         self.reset()

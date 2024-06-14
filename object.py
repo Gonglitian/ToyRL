@@ -22,9 +22,6 @@ BLACK = (0, 0, 0)
 
 # robot_image_rect = robot_image.get_rect()
 
-DELTA_T = 0.5
-MAX_V = 5
-
 
 class Object:
     def __init__(self, name, color, position=np.array([0, 0]), theta=0) -> None:
@@ -97,8 +94,8 @@ class TwoWheelsRobot(CircleObject):
         self.w = (self.vr - self.vl) / self.radius
 
         # 更新位置
-        self.position[0] += self.v * math.cos(self.theta) * DELTA_T
-        self.position[1] -= self.v * math.sin(self.theta) * DELTA_T
+        self.position[0] += self.v * math.cos(self.theta) * self.env.DELTA_T
+        self.position[1] -= self.v * math.sin(self.theta) * self.env.DELTA_T
 
         # 限制新位置在屏幕内
         if self.position[0] <= 0:
@@ -110,7 +107,7 @@ class TwoWheelsRobot(CircleObject):
         if self.position[1] >= self.screen.get_height():
             self.position[1] = self.screen.get_height()
 
-        self.theta += self.w * DELTA_T
+        self.theta += self.w * self.env.DELTA_T
         self.theta = normalize_angle(self.theta)
 
     def show(self):
@@ -134,7 +131,7 @@ class Obstacle(CircleObject):
         # 绕某个圆心做圆周运动
         self.position[0] = 200 + 50 * math.cos(self.theta)
         self.position[1] = 200 + 50 * math.sin(self.theta)
-        self.theta += self.w * DELTA_T
+        self.theta += self.w * self.env.DELTA_T
 
 
 class Target(CircleObject):
