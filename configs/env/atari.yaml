@@ -1,0 +1,28 @@
+# @package _global_
+# Atari environment configuration
+
+env_name: "PongNoFrameskip-v4"
+
+# Environment parameters
+env:
+  # Atari preprocessing
+  frame_skip: 4
+  screen_size: 84
+  terminal_on_life_loss: false
+  grayscale: true
+  scale_obs: true
+  
+  # Wrapper settings
+  clip_rewards: true
+  frame_stack: 4
+  
+  # Episode settings
+  max_episode_steps: 108000  # 30 minutes at 60 FPS
+  
+# Common Atari environments
+available_envs:
+  - "PongNoFrameskip-v4"
+  - "BreakoutNoFrameskip-v4" 
+  - "QbertNoFrameskip-v4"
+  - "SeaquestNoFrameskip-v4"
+  - "SpaceInvadersNoFrameskip-v4"

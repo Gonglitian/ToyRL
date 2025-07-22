@@ -1,0 +1,6 @@
+- algorithm=dqn
+- env_name=PongNoFrameskip-v4
+- dqn.learning_rate=0.001
+- episodes=1
+- max_steps=5
+- seed=123

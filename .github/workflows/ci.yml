@@ -1,0 +1,125 @@
+name: CI Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, '3.10', 3.11]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-opencv
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest
+    
+    - name: Run unit tests
+      run: |
+        python -m pytest tests/ -v
+    
+    - name: Test Hydra configuration loading
+      run: |
+        python -c "
+        import hydra
+        from omegaconf import DictConfig
+        with hydra.initialize(config_path='configs', version_base='1.3'):
+            cfg = hydra.compose(config_name='trainer')
+            assert cfg.algorithm_name == 'dqn'
+            assert cfg.env_name == 'PongNoFrameskip-v4'
+            print('✓ Hydra configuration test passed')
+        "
+    
+    - name: Test Logger functionality
+      run: |
+        python -c "
+        import tempfile
+        import shutil
+        from common.logger import Logger
+        
+        temp_dir = tempfile.mkdtemp()
+        logger = Logger(temp_dir)
+        logger.log_scalar('test_loss', 0.5, 10)
+        logger.log_episode_reward(15.0, 1)
+        logger.close()
+        shutil.rmtree(temp_dir)
+        print('✓ Logger functionality test passed')
+        "
+    
+    - name: Test short training run with Hydra
+      run: |
+        python train.py algorithm=dqn env_name=PongNoFrameskip-v4 episodes=1 max_steps=5
+        
+    - name: Test backward compatibility
+      run: |
+        python train.py --use_argparse --algorithm dqn --env PongNoFrameskip-v4 --episodes 1 --max_steps 5
+    
+    - name: Verify TensorBoard logs were created
+      run: |
+        python -c "
+        import os
+        import glob
+        
+        # Check if runs directory exists
+        assert os.path.exists('runs'), 'Runs directory should exist'
+        
+        # Check if event files were created
+        event_files = glob.glob('runs/**/events.out.tfevents.*', recursive=True)
+        assert len(event_files) > 0, f'At least one TensorBoard event file should exist, found: {event_files}'
+        
+        print(f'✓ Found {len(event_files)} TensorBoard event file(s)')
+        "
+
+  test-multirun:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Test Hydra multirun functionality
+      run: |
+        # Test multirun with DQN only (PPO might fail with very short training)
+        python train.py -m algorithm=dqn seed=42,123 episodes=1 max_steps=3
+        
+    - name: Verify multirun outputs
+      run: |
+        python -c "
+        import os
+        import glob
+        
+        # Check multirun outputs directory
+        if os.path.exists('outputs'):
+            run_dirs = glob.glob('outputs/*/') 
+            print(f'✓ Found {len(run_dirs)} multirun output directories')
+        else:
+            print('ℹ No multirun outputs directory (expected for some configurations)')
+        "

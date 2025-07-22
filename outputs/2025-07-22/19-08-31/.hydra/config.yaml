@@ -1,0 +1,46 @@
+algorithm_name: dqn
+dqn:
+  hidden_size: 512
+  learning_rate: 0.001
+  batch_size: 32
+  buffer_size: 100000
+  target_update_freq: 1000
+  train_freq: 4
+  gradient_steps: 1
+  exploration_initial_eps: 1.0
+  exploration_final_eps: 0.01
+  exploration_fraction: 0.1
+  gamma: 0.99
+  tau: 1.0
+  double_q: false
+  dueling: false
+env_name: PongNoFrameskip-v4
+env:
+  frame_skip: 4
+  screen_size: 84
+  terminal_on_life_loss: false
+  grayscale: true
+  scale_obs: true
+  clip_rewards: true
+  frame_stack: 4
+  max_episode_steps: 108000
+available_envs:
+- PongNoFrameskip-v4
+- BreakoutNoFrameskip-v4
+- QbertNoFrameskip-v4
+- SeaquestNoFrameskip-v4
+- SpaceInvadersNoFrameskip-v4
+seed: 123
+total_steps: 1000000
+episodes: 1
+max_steps: 5
+eval_freq: 100
+eval_episodes: 5
+log_dir: runs
+save_dir: models
+save_freq: 200
+tensorboard:
+  log_interval: 10
+  log_histograms: true
+  log_model_graph: true
+device: auto

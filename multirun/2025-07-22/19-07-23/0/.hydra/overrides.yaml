@@ -1,0 +1,4 @@
+- algorithm=dqn
+- env_name=PongNoFrameskip-v4
+- episodes=1
+- max_steps=5
