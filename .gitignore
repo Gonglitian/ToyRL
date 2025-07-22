@@ -58,6 +58,12 @@ checkpoints/
 results/
 outputs/
 
+# Inference and visualization
+gifs/
+inference_gifs/
+*.gif
+inference_results.json
+
 # Hydra
 .hydra/
 outputs/

@@ -29,20 +29,32 @@ rl-algorithms/
 │   ├── networks.py            # Neural network architectures
 │   ├── replay_buffer.py       # Experience replay implementations
 │   ├── env_wrappers.py        # Atari environment wrappers
+│   ├── gif_wrapper.py         # GIF recording wrapper
 │   ├── utils.py               # Utility functions and classes
 │   └── logger.py              # Enhanced TensorBoard logger
 ├── configs/                   # Hydra configuration files
-│   ├── algorithm/             # Algorithm-specific configs
+│   ├── algorithm/             # Algorithm-specific configs (11 algorithms)
 │   │   ├── dqn.yaml          # DQN hyperparameters
-│   │   └── ppo.yaml          # PPO hyperparameters
+│   │   ├── double_dqn.yaml   # Double DQN hyperparameters
+│   │   ├── dueling_dqn.yaml  # Dueling DQN hyperparameters
+│   │   ├── dueling_double_dqn.yaml # Dueling Double DQN hyperparameters
+│   │   ├── reinforce.yaml    # REINFORCE hyperparameters
+│   │   ├── actor_critic.yaml # Actor-Critic hyperparameters
+│   │   ├── a2c.yaml         # A2C hyperparameters
+│   │   ├── a3c.yaml         # A3C hyperparameters
+│   │   ├── ppo.yaml         # PPO hyperparameters
+│   │   ├── trpo.yaml        # TRPO hyperparameters
+│   │   └── sac.yaml         # SAC hyperparameters
 │   ├── env/                   # Environment configs
 │   │   └── atari.yaml        # Atari environment settings
-│   └── trainer.yaml           # Main training configuration
+│   ├── trainer.yaml           # Main training configuration
+│   └── inference.yaml         # Inference configuration
 ├── tests/                     # Test scripts
 │   ├── __init__.py
 │   ├── test_algorithms.py     # Algorithm verification tests
 │   └── test_hydra_tensorboard.py  # Hydra & TensorBoard tests
 ├── train.py                   # Unified training script
+├── inference.py               # Model inference and evaluation script
 ├── requirements.txt           # Dependencies
 └── README.md                  # This file
 ```
@@ -225,6 +237,64 @@ env:
   clip_rewards: true
   frame_stack: 4
 ```
+
+## 🎮 Inference and Model Evaluation
+
+Once you have trained models, you can run inference and create visualizations:
+
+### Basic Inference
+
+Load and run trained models:
+
+```bash
+# Run trained DQN model
+python inference.py model.checkpoint_path=models/dqn_best.pth
+
+# Run with different algorithm configuration
+python inference.py algorithm=ppo model.checkpoint_path=models/ppo_best.pth
+
+# Run custom number of episodes
+python inference.py model.checkpoint_path=models/a2c_best.pth \
+    inference.num_episodes=10 inference.max_steps_per_episode=1000
+
+# Disable rendering for faster inference
+python inference.py model.checkpoint_path=models/dqn_best.pth \
+    inference.render=false
+```
+
+### 🎬 GIF Recording
+
+Record episodes as animated GIFs to visualize agent behavior:
+
+```bash
+# Record all episodes
+python inference.py model.checkpoint_path=models/dqn_best.pth \
+    recording.enabled=true recording.record_episodes=all
+
+# Record every 3rd episode
+python inference.py model.checkpoint_path=models/ppo_best.pth \
+    recording.enabled=true recording.record_episodes=every_n \
+    recording.record_params.n=3
+
+# Record specific episodes
+python inference.py model.checkpoint_path=models/a2c_best.pth \
+    recording.enabled=true recording.record_episodes=specific \
+    recording.record_params.episodes=[1,5,10]
+
+# Custom GIF settings
+python inference.py model.checkpoint_path=models/dqn_best.pth \
+    recording.enabled=true recording.fps=20 \
+    recording.resize=[640,480] recording.quality=90
+```
+
+### Statistics and Results
+
+The inference script automatically computes and saves detailed statistics:
+
+- Mean, std, min, max rewards
+- Episode lengths and success rates  
+- Full episode-by-episode results
+- Configurable result saving to JSON
 
 ### Advanced Usage
 

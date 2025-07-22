@@ -297,7 +297,8 @@ class FrameStack(gym.Wrapper):
 
 
 def make_atari_env(env_id: str, stack_frames: int = 4, episodic_life: bool = True,
-                   clip_rewards: bool = True, frame_skip: int = 4, screen_size: int = 84):
+                   clip_rewards: bool = True, frame_skip: int = 4, screen_size: int = 84, 
+                   render_mode: Optional[str] = None):
     """
     Create a wrapped Atari environment.
     
@@ -308,11 +309,12 @@ def make_atari_env(env_id: str, stack_frames: int = 4, episodic_life: bool = Tru
         clip_rewards: Whether to clip rewards
         frame_skip: Number of frames to skip
         screen_size: Screen size for warping
+        render_mode: Rendering mode ("human", "rgb_array", "ansi", or None)
         
     Returns:
         Wrapped environment
     """
-    env = gym.make(env_id, render_mode=None)
+    env = gym.make(env_id, render_mode=render_mode)
     
     # Standard Atari preprocessing
     env = NoopResetEnv(env, noop_max=30)
