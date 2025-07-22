@@ -63,8 +63,8 @@ rl-algorithms/
 
 1. **Clone the repository:**
 ```bash
-git clone <repository-url>
-cd rl-algorithms
+git clone https://github.com/Gonglitian/ToyRL.git
+cd ToyRL
 ```
 
 2. **Install dependencies:**
