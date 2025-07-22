@@ -1,0 +1,24 @@
+# @package _global_
+# REINFORCE algorithm configuration
+
+algorithm_name: "reinforce"
+
+# REINFORCE specific hyperparameters
+reinforce:
+  # Network parameters
+  hidden_size: 128
+  learning_rate: 0.001
+  
+  # Training parameters
+  gamma: 0.99
+  
+  # Policy network parameters
+  policy_lr: 0.001
+  
+  # Baseline parameters (if used)
+  use_baseline: false
+  baseline_lr: 0.001
+  
+  # Other parameters
+  normalize_returns: true
+  entropy_coef: 0.01
