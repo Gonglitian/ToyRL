@@ -1,0 +1,41 @@
+# @package _global_
+# SAC (Soft Actor-Critic) algorithm configuration
+
+algorithm_name: "sac"
+
+# SAC specific hyperparameters
+sac:
+  # Network parameters
+  hidden_size: 256
+  learning_rate: 0.0003
+  
+  # Training parameters
+  batch_size: 256
+  buffer_size: 1000000
+  learning_starts: 10000
+  train_freq: 1
+  gradient_steps: 1
+  
+  # SAC specific parameters
+  gamma: 0.99
+  tau: 0.005
+  target_update_interval: 1
+  
+  # Actor network parameters
+  actor_lr: 0.0003
+  
+  # Critic network parameters
+  critic_lr: 0.0003
+  
+  # Temperature parameter
+  alpha: 0.2
+  auto_alpha: true
+  alpha_lr: 0.0003
+  target_entropy: "auto"
+  
+  # Replay buffer parameters
+  optimize_memory_usage: false
+  
+  # Policy parameters
+  use_sde: false
+  sde_sample_freq: -1

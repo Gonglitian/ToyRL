@@ -1,0 +1,23 @@
+# @package _global_
+# Actor-Critic algorithm configuration
+
+algorithm_name: "actor_critic"
+
+# Actor-Critic specific hyperparameters
+actor_critic:
+  # Network parameters
+  hidden_size: 128
+  learning_rate: 0.001
+  
+  # Training parameters
+  gamma: 0.99
+  
+  # Policy network parameters
+  policy_lr: 0.001
+  
+  # Value network parameters
+  value_lr: 0.001
+  
+  # Other parameters
+  entropy_coef: 0.01
+  value_loss_coef: 0.5

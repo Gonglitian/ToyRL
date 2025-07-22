@@ -5,9 +5,12 @@ A comprehensive implementation of classic deep reinforcement learning algorithms
 ## 🚀 Features
 
 - **10 Classic RL Algorithms**: DQN, Double DQN, Dueling DQN, REINFORCE, Actor-Critic, A2C, A3C, PPO, TRPO, SAC
+- **Hydra Configuration System**: Modern configuration management with YAML files and command-line overrides
+- **TensorBoard Integration**: Real-time visualization of training metrics, model graphs, and hyperparameters
 - **Atari Environment Support**: Pre-configured wrappers for Atari games with standard preprocessing
 - **Modular Design**: Shared components like replay buffers, neural networks, and utilities
 - **Easy Training**: Unified training script that works with all algorithms
+- **Backward Compatibility**: Supports both new Hydra configs and traditional argparse
 - **Comprehensive Testing**: Test suite to verify all implementations
 - **Documentation**: Detailed explanations of each algorithm and usage examples
 
@@ -26,11 +29,32 @@ rl-algorithms/
 │   ├── networks.py            # Neural network architectures
 │   ├── replay_buffer.py       # Experience replay implementations
 │   ├── env_wrappers.py        # Atari environment wrappers
-│   └── utils.py               # Utility functions and classes
+│   ├── gif_wrapper.py         # GIF recording wrapper
+│   ├── utils.py               # Utility functions and classes
+│   └── logger.py              # Enhanced TensorBoard logger
+├── configs/                   # Hydra configuration files
+│   ├── algorithm/             # Algorithm-specific configs (11 algorithms)
+│   │   ├── dqn.yaml          # DQN hyperparameters
+│   │   ├── double_dqn.yaml   # Double DQN hyperparameters
+│   │   ├── dueling_dqn.yaml  # Dueling DQN hyperparameters
+│   │   ├── dueling_double_dqn.yaml # Dueling Double DQN hyperparameters
+│   │   ├── reinforce.yaml    # REINFORCE hyperparameters
+│   │   ├── actor_critic.yaml # Actor-Critic hyperparameters
+│   │   ├── a2c.yaml         # A2C hyperparameters
+│   │   ├── a3c.yaml         # A3C hyperparameters
+│   │   ├── ppo.yaml         # PPO hyperparameters
+│   │   ├── trpo.yaml        # TRPO hyperparameters
+│   │   └── sac.yaml         # SAC hyperparameters
+│   ├── env/                   # Environment configs
+│   │   └── atari.yaml        # Atari environment settings
+│   ├── trainer.yaml           # Main training configuration
+│   └── inference.yaml         # Inference configuration
 ├── tests/                     # Test scripts
 │   ├── __init__.py
-│   └── test_algorithms.py     # Algorithm verification tests
+│   ├── test_algorithms.py     # Algorithm verification tests
+│   └── test_hydra_tensorboard.py  # Hydra & TensorBoard tests
 ├── train.py                   # Unified training script
+├── inference.py               # Model inference and evaluation script
 ├── requirements.txt           # Dependencies
 └── README.md                  # This file
 ```
@@ -115,22 +139,183 @@ python tests/test_algorithms.py
 
 ## 🏃‍♂️ Quick Start
 
-### Training an Algorithm
+### Training with Hydra Configuration (Recommended)
 
-Use the unified training script to train any algorithm:
+The modern way to train algorithms using Hydra configs with TensorBoard logging:
 
 ```bash
-# Train DQN on Pong
-python train.py --algorithm dqn --env PongNoFrameskip-v4 --episodes 1000
+# Train DQN on Pong with default settings
+python train.py algorithm=dqn env_name=PongNoFrameskip-v4
 
-# Train PPO on Breakout
-python train.py --algorithm ppo --env BreakoutNoFrameskip-v4 --episodes 2000
+# Train PPO on Breakout with custom episodes
+python train.py algorithm=ppo env_name=BreakoutNoFrameskip-v4 episodes=2000
 
-# Train with custom parameters
-python train.py --algorithm a2c --env PongNoFrameskip-v4 --episodes 1500 --eval_freq 50 --save_freq 100
+# Override multiple parameters
+python train.py algorithm=dqn env_name=PongNoFrameskip-v4 episodes=1000 seed=123 eval_freq=50
 ```
 
-### Training Parameters
+### TensorBoard Visualization
+
+Start TensorBoard to monitor training in real-time:
+
+```bash
+# Start TensorBoard (after starting training)
+tensorboard --logdir=runs
+
+# View in browser at http://localhost:6006
+```
+
+The TensorBoard interface will show:
+- **Training metrics**: Loss, rewards, episode length
+- **Evaluation results**: Mean/std evaluation rewards
+- **Model architecture**: Network graph visualization
+- **Hyperparameters**: Complete configuration tracking
+- **Weight histograms**: Network parameter distributions
+
+### Training an Algorithm (Legacy Mode)
+
+For backward compatibility, you can still use the traditional argparse interface:
+
+```bash
+# Train DQN on Pong (legacy mode)
+python train.py --use_argparse --algorithm dqn --env PongNoFrameskip-v4 --episodes 1000
+
+# Train PPO on Breakout (legacy mode)
+python train.py --use_argparse --algorithm ppo --env BreakoutNoFrameskip-v4 --episodes 2000
+
+# Train with custom parameters (legacy mode)
+python train.py --use_argparse --algorithm a2c --env PongNoFrameskip-v4 --episodes 1500 --eval_freq 50 --save_freq 100
+```
+
+## ⚙️ Configuration Management
+
+### Hydra Configuration Structure
+
+The configuration is organized hierarchically:
+
+```yaml
+# configs/trainer.yaml (main config)
+defaults:
+  - algorithm: dqn
+  - env: atari
+
+seed: 42
+episodes: 1000
+log_dir: "runs"
+tensorboard:
+  log_interval: 10
+  log_histograms: true
+  log_model_graph: true
+```
+
+### Algorithm-Specific Configs
+
+Each algorithm has its own configuration file with hyperparameters:
+
+```yaml
+# configs/algorithm/dqn.yaml
+algorithm_name: "dqn"
+dqn:
+  learning_rate: 0.0001
+  batch_size: 32
+  buffer_size: 100000
+  target_update_freq: 1000
+  exploration_initial_eps: 1.0
+  exploration_final_eps: 0.01
+```
+
+### Environment Configs
+
+Environment settings are also configurable:
+
+```yaml
+# configs/env/atari.yaml
+env_name: "PongNoFrameskip-v4"
+env:
+  frame_skip: 4
+  screen_size: 84
+  clip_rewards: true
+  frame_stack: 4
+```
+
+## 🎮 Inference and Model Evaluation
+
+Once you have trained models, you can run inference and create visualizations:
+
+### Basic Inference
+
+Load and run trained models:
+
+```bash
+# Run trained DQN model
+python inference.py model.checkpoint_path=models/dqn_best.pth
+
+# Run with different algorithm configuration
+python inference.py algorithm=ppo model.checkpoint_path=models/ppo_best.pth
+
+# Run custom number of episodes
+python inference.py model.checkpoint_path=models/a2c_best.pth \
+    inference.num_episodes=10 inference.max_steps_per_episode=1000
+
+# Disable rendering for faster inference
+python inference.py model.checkpoint_path=models/dqn_best.pth \
+    inference.render=false
+```
+
+### 🎬 GIF Recording
+
+Record episodes as animated GIFs to visualize agent behavior:
+
+```bash
+# Record all episodes
+python inference.py model.checkpoint_path=models/dqn_best.pth \
+    recording.enabled=true recording.record_episodes=all
+
+# Record every 3rd episode
+python inference.py model.checkpoint_path=models/ppo_best.pth \
+    recording.enabled=true recording.record_episodes=every_n \
+    recording.record_params.n=3
+
+# Record specific episodes
+python inference.py model.checkpoint_path=models/a2c_best.pth \
+    recording.enabled=true recording.record_episodes=specific \
+    recording.record_params.episodes=[1,5,10]
+
+# Custom GIF settings
+python inference.py model.checkpoint_path=models/dqn_best.pth \
+    recording.enabled=true recording.fps=20 \
+    recording.resize=[640,480] recording.quality=90
+```
+
+### Statistics and Results
+
+The inference script automatically computes and saves detailed statistics:
+
+- Mean, std, min, max rewards
+- Episode lengths and success rates  
+- Full episode-by-episode results
+- Configurable result saving to JSON
+
+### Advanced Usage
+
+#### Multi-Run Experiments
+
+Run multiple experiments with different hyperparameters:
+
+```bash
+# Run with multiple learning rates
+python train.py -m dqn.learning_rate=1e-3,1e-4,5e-4
+
+# Run on multiple environments
+python train.py -m env_name=PongNoFrameskip-v4,BreakoutNoFrameskip-v4
+
+# Grid search
+python train.py -m dqn.learning_rate=1e-3,1e-4 episodes=500,1000
+```
+
+### Training Parameters (Legacy Mode)
+
+For backward compatibility with `--use_argparse`:
 
 - `--algorithm`: Choose from {dqn, double_dqn, dueling_dqn, dueling_double_dqn, reinforce, actor_critic, a2c, ppo, trpo, sac}
 - `--env`: Atari environment name (e.g., PongNoFrameskip-v4, BreakoutNoFrameskip-v4)
@@ -143,24 +328,33 @@ python train.py --algorithm a2c --env PongNoFrameskip-v4 --episodes 1500 --eval_
 ### Example Training Commands
 
 ```bash
-# Quick test (short training)
-python train.py --algorithm dqn --env PongNoFrameskip-v4 --episodes 100
+# Modern Hydra approach
+python train.py algorithm=dqn env_name=PongNoFrameskip-v4 episodes=100
 
-# Full training with evaluation
-python train.py --algorithm ppo --env BreakoutNoFrameskip-v4 --episodes 2000 --eval_freq 100
+# With TensorBoard monitoring
+python train.py algorithm=ppo env_name=BreakoutNoFrameskip-v4 episodes=2000 eval_freq=100
 
-# Compare algorithms (run separately)
-python train.py --algorithm dqn --env PongNoFrameskip-v4 --episodes 1000 --seed 42
-python train.py --algorithm double_dqn --env PongNoFrameskip-v4 --episodes 1000 --seed 42
-python train.py --algorithm ppo --env PongNoFrameskip-v4 --episodes 1000 --seed 42
+# Legacy approach with argparse
+python train.py --use_argparse --algorithm dqn --env PongNoFrameskip-v4 --episodes 100
+
+# Compare algorithms (modern approach)
+python train.py algorithm=dqn env_name=PongNoFrameskip-v4 episodes=1000 seed=42
+python train.py algorithm=ppo env_name=PongNoFrameskip-v4 episodes=1000 seed=42
 ```
 
 ## 🧪 Testing
 
-Run the test suite to verify all algorithms work correctly:
+Run the test suite to verify all algorithms and new features work correctly:
 
 ```bash
+# Test all algorithms
 python tests/test_algorithms.py
+
+# Test Hydra and TensorBoard integration
+python tests/test_hydra_tensorboard.py
+
+# Quick integration test (10 steps training)
+python train.py algorithm=dqn env_name=PongNoFrameskip-v4 episodes=1 max_steps=10
 ```
 
 The test suite will:
@@ -168,6 +362,10 @@ The test suite will:
 - ✅ Test shared components (networks, replay buffers, utilities)
 - ✅ Test each algorithm's instantiation and basic operations
 - ✅ Test model saving and loading for each algorithm
+- ✅ Test Hydra configuration loading and composition
+- ✅ Test TensorBoard logger functionality
+- ✅ Test backward compatibility with argparse
+- ✅ Verify TensorBoard event file generation
 
 ## 📊 Expected Performance
 

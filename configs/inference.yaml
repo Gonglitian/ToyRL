@@ -1,0 +1,45 @@
+# Inference configuration for running trained models
+# This config is used by inference.py to load and run trained agents
+
+defaults:
+  - algorithm: dqn
+  - env: atari
+  - _self_
+
+# Model loading
+model:
+  checkpoint_path: "models/best_model.pth"  # Path to the trained model
+  load_best: true  # Whether to load the best model (vs final model)
+  
+# Inference parameters
+inference:
+  num_episodes: 10  # Number of episodes to run
+  max_steps_per_episode: 10000  # Maximum steps per episode
+  deterministic: true  # Use deterministic policy (no exploration)
+  render: true  # Whether to render the environment
+  render_mode: "human"  # Rendering mode: "human", "rgb_array", "ansi"
+  
+# Recording and visualization
+recording:
+  enabled: false  # Whether to record episodes as GIFs
+  save_dir: "inference_gifs"  # Directory to save GIF recordings
+  fps: 30  # Frames per second for GIF
+  resize: [320, 240]  # Resize frames to [width, height], null for original size
+  quality: 95  # GIF quality (0-100)
+  record_episodes: "all"  # "all", "first_n", "last_n", "every_n", or list of episode numbers
+  record_params:
+    n: 5  # Parameter for first_n, last_n, or every_n
+    episodes: [1, 5, 10]  # List for specific episodes
+
+# Environment parameters (inherited from env config but can be overridden)
+env_params:
+  seed: 42  # Random seed for reproducible inference
+  
+# Evaluation and statistics
+evaluation:
+  compute_stats: true  # Whether to compute and display statistics
+  save_results: true  # Whether to save results to file
+  results_file: "inference_results.json"  # File to save results
+  
+# Device settings
+device: "auto"  # "auto", "cpu", "cuda"

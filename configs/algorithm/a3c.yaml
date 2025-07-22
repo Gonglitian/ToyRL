@@ -1,0 +1,37 @@
+# @package _global_
+# A3C (Asynchronous Advantage Actor-Critic) algorithm configuration
+
+algorithm_name: "a3c"
+
+# A3C specific hyperparameters
+a3c:
+  # Network parameters
+  hidden_size: 512
+  learning_rate: 0.0001
+  
+  # Training parameters
+  n_steps: 20
+  gamma: 0.99
+  gae_lambda: 1.0
+  
+  # Multi-processing parameters
+  num_workers: 4
+  
+  # Policy network parameters
+  policy_lr: 0.0001
+  
+  # Value network parameters
+  value_lr: 0.0001
+  
+  # Loss coefficients
+  entropy_coef: 0.01
+  value_loss_coef: 0.5
+  
+  # Gradient clipping
+  max_grad_norm: 40.0
+  
+  # Update frequency
+  update_global_freq: 20
+  
+  # Advantage normalization
+  normalize_advantage: true

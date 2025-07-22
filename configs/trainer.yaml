@@ -1,0 +1,29 @@
+# Main trainer configuration
+# Shared parameters across all algorithms
+
+defaults:
+  - algorithm: dqn
+  - env: atari
+  - _self_
+
+# Training parameters
+seed: 42
+total_steps: 1000000
+episodes: 1000
+max_steps: 10000
+eval_freq: 100
+eval_episodes: 5
+
+# Logging parameters
+log_dir: "runs"
+save_dir: "models"
+save_freq: 200
+
+# TensorBoard parameters
+tensorboard:
+  log_interval: 10  # Log every N episodes
+  log_histograms: true
+  log_model_graph: true
+
+# Device settings
+device: "auto"  # auto, cpu, cuda

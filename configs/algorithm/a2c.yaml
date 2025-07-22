@@ -1,0 +1,31 @@
+# @package _global_
+# A2C (Advantage Actor-Critic) algorithm configuration
+
+algorithm_name: "a2c"
+
+# A2C specific hyperparameters
+a2c:
+  # Network parameters
+  hidden_size: 512
+  learning_rate: 0.0007
+  
+  # Training parameters
+  n_steps: 5
+  gamma: 0.99
+  gae_lambda: 1.0
+  
+  # Policy network parameters
+  policy_lr: 0.0007
+  
+  # Value network parameters
+  value_lr: 0.0007
+  
+  # Loss coefficients
+  entropy_coef: 0.01
+  value_loss_coef: 0.25
+  
+  # Gradient clipping
+  max_grad_norm: 0.5
+  
+  # Advantage normalization
+  normalize_advantage: false
