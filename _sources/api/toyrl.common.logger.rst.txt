@@ -1,0 +1,14 @@
+﻿toyrl.common.logger
+===================
+
+.. automodule:: toyrl.common.logger
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Logger
+      SummaryWriter
+      defaultdict
+   
