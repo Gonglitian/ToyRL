@@ -1,0 +1,67 @@
+site_name: ToyRL Documentation
+site_description: A comprehensive implementation of classic deep reinforcement learning algorithms
+site_author: ToyRL Contributors
+site_url: https://yourusername.github.io/toyrl
+
+repo_name: yourusername/toyrl
+repo_url: https://github.com/yourusername/toyrl
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - search.highlight
+    - search.share
+    - content.code.copy
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_inheritance_diagram: true
+
+nav:
+  - Home: index.md
+  - API Reference:
+    - Algorithms:
+      - DQN: api/algorithms/dqn.md
+      - SAC: api/algorithms/sac.md
+      - Policy Gradient: api/algorithms/policy_gradient.md
+      - Advanced PG: api/algorithms/advanced_pg.md
+    - Common:
+      - Networks: api/common/networks.md
+      - Replay Buffer: api/common/replay_buffer.md
+      - Utils: api/common/utils.md
+      - Environment Wrappers: api/common/env_wrappers.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.arithmatex:
+      generic: true

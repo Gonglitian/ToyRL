@@ -1,0 +1,31 @@
+toyrl.common.utils
+==================
+
+.. automodule:: toyrl.common.utils
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      compute_gae
+      compute_returns
+      explained_variance
+      get_device
+      hard_update
+      linear_schedule
+      load_model
+      save_model
+      set_seed
+      soft_update
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Any
+      EpsilonScheduler
+      MetricsLogger
+      RunningMeanStd
+      defaultdict
+   

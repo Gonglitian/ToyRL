@@ -1,489 +1,342 @@
-# Deep Reinforcement Learning Algorithms Library
+# ToyRL: Deep Reinforcement Learning Algorithms Library
 
-A comprehensive implementation of classic deep reinforcement learning algorithms tested on Atari environments. This library provides clean, modular implementations of 10 fundamental RL algorithms with shared components for easy experimentation and comparison.
+[![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)](https://python.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Documentation](https://img.shields.io/badge/docs-sphinx-blue.svg)](docs/_build/html/index.html)
+
+A comprehensive implementation of classic deep reinforcement learning algorithms tested on Atari environments. This library provides clean, modular implementations of fundamental RL algorithms with shared components for easy experimentation and comparison.
 
 ## 🚀 Features
 
-- **10 Classic RL Algorithms**: DQN, Double DQN, Dueling DQN, REINFORCE, Actor-Critic, A2C, A3C, PPO, TRPO, SAC
-- **Hydra Configuration System**: Modern configuration management with YAML files and command-line overrides
-- **TensorBoard Integration**: Real-time visualization of training metrics, model graphs, and hyperparameters
-- **Atari Environment Support**: Pre-configured wrappers for Atari games with standard preprocessing
-- **Modular Design**: Shared components like replay buffers, neural networks, and utilities
-- **Easy Training**: Unified training script that works with all algorithms
-- **Backward Compatibility**: Supports both new Hydra configs and traditional argparse
-- **Comprehensive Testing**: Test suite to verify all implementations
-- **Documentation**: Detailed explanations of each algorithm and usage examples
+- **10 Classic RL Algorithms**: DQN variants, Policy Gradient methods, Actor-Critic algorithms
+- **Modern Python Packaging**: Installable via `pip install -e .`
+- **Modular Design**: Clean, well-documented code with shared utilities
+- **Atari Ready**: Pre-configured environment wrappers for Atari 2600 games
+- **Comprehensive Documentation**: Auto-generated API docs with Sphinx
+- **Easy Installation**: Modern Python packaging with proper dependency management
+- **Extensible**: Easy to modify and extend for new algorithms
+
+## 📦 Installation
+
+### From Source (Recommended)
+
+```bash
+git clone https://github.com/yourusername/toyrl.git
+cd toyrl
+pip install -e .
+```
+
+### Development Installation
+
+```bash
+git clone https://github.com/yourusername/toyrl.git
+cd toyrl
+pip install -e ".[dev,docs]"
+```
+
+## 🎯 Quick Start
+
+```python
+import toyrl
+from toyrl.algorithms import SAC, DQN
+from toyrl.common import make_atari_env
+
+# Create environment
+env = make_atari_env('PongNoFrameskip-v4')
+
+# Initialize algorithm  
+agent = DQN(
+    state_dim=env.observation_space.shape,
+    action_dim=env.action_space.n,
+    lr=1e-4
+)
+
+# Train
+agent.train(env, num_episodes=1000)
+```
+
+## 🧠 Algorithms Implemented
+
+### Value-Based Methods
+- **DQN** (Deep Q-Network) - `toyrl.algorithms.DQN`
+- **Double DQN** - `toyrl.algorithms.DoubleDQN`  
+- **Dueling DQN** - `toyrl.algorithms.DuelingDQN`
+
+### Policy Gradient Methods
+- **REINFORCE** - `toyrl.algorithms.REINFORCE`
+- **Actor-Critic** - `toyrl.algorithms.ActorCritic`
+- **A2C** (Advantage Actor-Critic) - `toyrl.algorithms.A2C`
+
+### Advanced Policy Methods
+- **A3C** (Asynchronous Advantage Actor-Critic) - `toyrl.algorithms.A3C`
+- **PPO** (Proximal Policy Optimization) - `toyrl.algorithms.PPO`
+- **TRPO** (Trust Region Policy Optimization) - `toyrl.algorithms.TRPO`
+
+### Actor-Critic Methods
+- **SAC** (Soft Actor-Critic) - `toyrl.algorithms.SAC`
 
 ## 📁 Project Structure
 
 ```
-rl-algorithms/
-├── algorithms/                 # Algorithm implementations
-│   ├── __init__.py
-│   ├── dqn.py                 # DQN variants (DQN, Double DQN, Dueling DQN)
-│   ├── policy_gradient.py     # Policy gradient methods (REINFORCE, AC, A2C)
-│   ├── advanced_pg.py         # Advanced PG methods (A3C, PPO, TRPO)
-│   └── sac.py                 # Soft Actor-Critic
-├── common/                    # Shared components
-│   ├── __init__.py
-│   ├── networks.py            # Neural network architectures
-│   ├── replay_buffer.py       # Experience replay implementations
-│   ├── env_wrappers.py        # Atari environment wrappers
-│   ├── gif_wrapper.py         # GIF recording wrapper
-│   ├── utils.py               # Utility functions and classes
-│   └── logger.py              # Enhanced TensorBoard logger
-├── configs/                   # Hydra configuration files
-│   ├── algorithm/             # Algorithm-specific configs (11 algorithms)
-│   │   ├── dqn.yaml          # DQN hyperparameters
-│   │   ├── double_dqn.yaml   # Double DQN hyperparameters
-│   │   ├── dueling_dqn.yaml  # Dueling DQN hyperparameters
-│   │   ├── dueling_double_dqn.yaml # Dueling Double DQN hyperparameters
-│   │   ├── reinforce.yaml    # REINFORCE hyperparameters
-│   │   ├── actor_critic.yaml # Actor-Critic hyperparameters
-│   │   ├── a2c.yaml         # A2C hyperparameters
-│   │   ├── a3c.yaml         # A3C hyperparameters
-│   │   ├── ppo.yaml         # PPO hyperparameters
-│   │   ├── trpo.yaml        # TRPO hyperparameters
-│   │   └── sac.yaml         # SAC hyperparameters
-│   ├── env/                   # Environment configs
-│   │   └── atari.yaml        # Atari environment settings
-│   ├── trainer.yaml           # Main training configuration
-│   └── inference.yaml         # Inference configuration
-├── tests/                     # Test scripts
-│   ├── __init__.py
-│   ├── test_algorithms.py     # Algorithm verification tests
-│   └── test_hydra_tensorboard.py  # Hydra & TensorBoard tests
-├── train.py                   # Unified training script
-├── inference.py               # Model inference and evaluation script
-├── requirements.txt           # Dependencies
-└── README.md                  # This file
+ToyRL/
+├── src/toyrl/           # Main package
+│   ├── __init__.py      # Package initialization  
+│   ├── algorithms/      # RL algorithms
+│   │   ├── __init__.py
+│   │   ├── dqn.py       # DQN variants
+│   │   ├── sac.py       # Soft Actor-Critic
+│   │   ├── policy_gradient.py  # REINFORCE, A2C, Actor-Critic
+│   │   └── advanced_pg.py      # A3C, PPO, TRPO
+│   └── common/          # Shared utilities
+│       ├── __init__.py
+│       ├── networks.py  # Neural network architectures
+│       ├── replay_buffer.py  # Experience replay
+│       ├── env_wrappers.py   # Environment preprocessing
+│       ├── utils.py     # Helper functions
+│       ├── logger.py    # TensorBoard logging
+│       └── gif_wrapper.py    # GIF recording
+├── docs/                # Documentation
+│   ├── conf.py          # Sphinx configuration
+│   ├── index.rst        # Main documentation
+│   └── _build/html/     # Generated HTML docs
+├── examples/            # Usage examples
+├── tests/               # Unit tests
+├── pyproject.toml       # Project configuration
+├── Makefile            # Build commands
+├── mkdocs.yml          # Alternative docs (MkDocs)
+├── LICENSE             # MIT License
+└── README.md           # This file
 ```
 
-## 🛠️ Installation
+## 📚 Documentation
 
-1. **Clone the repository:**
-```bash
-git clone https://github.com/Gonglitian/ToyRL.git
-cd ToyRL
-```
+### Building Documentation
 
-2. **Install dependencies:**
-```bash
-pip install -r requirements.txt
-```
-
-3. **Verify installation:**
-```bash
-python tests/test_algorithms.py
-```
-
-## 🎮 Algorithms Implemented
-
-### Value-Based Methods
-
-#### 1. DQN (Deep Q-Network)
-- **Paper**: "Human-level control through deep reinforcement learning" (Mnih et al., 2015)
-- **Key Features**: Experience replay, target networks, ε-greedy exploration
-- **Use Case**: Discrete action spaces, stable value learning
-
-#### 2. Double DQN
-- **Paper**: "Deep Reinforcement Learning with Double Q-learning" (van Hasselt et al., 2016)
-- **Key Features**: Reduces overestimation bias using two Q-networks
-- **Improvement**: More stable Q-value estimates
-
-#### 3. Dueling DQN
-- **Paper**: "Dueling Network Architectures for Deep Reinforcement Learning" (Wang et al., 2016)
-- **Key Features**: Separate value and advantage streams
-- **Improvement**: Better value function approximation
-
-### Policy-Based Methods
-
-#### 4. REINFORCE
-- **Paper**: "Simple statistical gradient-following algorithms for connectionist reinforcement learning" (Williams, 1992)
-- **Key Features**: Monte Carlo policy gradient, episode-based learning
-- **Use Case**: Simple policy optimization, high variance
-
-#### 5. Actor-Critic
-- **Paper**: "Actor-Critic Algorithms" (Konda & Tsitsiklis, 2000)
-- **Key Features**: Combined policy and value function learning
-- **Improvement**: Reduced variance compared to REINFORCE
-
-#### 6. A2C (Advantage Actor-Critic)
-- **Paper**: "Asynchronous Methods for Deep Reinforcement Learning" (Mnih et al., 2016)
-- **Key Features**: Advantage function, entropy regularization
-- **Improvement**: More stable learning, shared network
-
-### Advanced Policy Gradient Methods
-
-#### 7. A3C (Asynchronous Advantage Actor-Critic)
-- **Paper**: "Asynchronous Methods for Deep Reinforcement Learning" (Mnih et al., 2016)
-- **Key Features**: Asynchronous parallel training, global network
-- **Improvement**: Faster training, exploration diversity
-
-#### 8. PPO (Proximal Policy Optimization)
-- **Paper**: "Proximal Policy Optimization Algorithms" (Schulman et al., 2017)
-- **Key Features**: Clipped objective, multiple epochs per batch
-- **Improvement**: Stable policy updates, easy to tune
-
-#### 9. TRPO (Trust Region Policy Optimization)
-- **Paper**: "Trust Region Policy Optimization" (Schulman et al., 2015)
-- **Key Features**: Constrained policy updates, conjugate gradient
-- **Improvement**: Theoretical guarantees for policy improvement
-
-### Maximum Entropy Methods
-
-#### 10. SAC (Soft Actor-Critic)
-- **Paper**: "Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor" (Haarnoja et al., 2018)
-- **Key Features**: Maximum entropy objective, automatic temperature tuning
-- **Improvement**: Sample efficiency, robust exploration
-
-## 🏃‍♂️ Quick Start
-
-### Training with Hydra Configuration (Recommended)
-
-The modern way to train algorithms using Hydra configs with TensorBoard logging:
+Build the Sphinx documentation locally:
 
 ```bash
-# Train DQN on Pong with default settings
-python train.py algorithm=dqn env_name=PongNoFrameskip-v4
-
-# Train PPO on Breakout with custom episodes
-python train.py algorithm=ppo env_name=BreakoutNoFrameskip-v4 episodes=2000
-
-# Override multiple parameters
-python train.py algorithm=dqn env_name=PongNoFrameskip-v4 episodes=1000 seed=123 eval_freq=50
+make docs
 ```
 
-### TensorBoard Visualization
+Then open `docs/_build/html/index.html` in your browser.
 
-Start TensorBoard to monitor training in real-time:
+### Alternative: MkDocs
+
+This project also supports MkDocs as an alternative documentation system:
 
 ```bash
-# Start TensorBoard (after starting training)
-tensorboard --logdir=runs
-
-# View in browser at http://localhost:6006
+pip install mkdocs mkdocs-material mkdocstrings[python]
+mkdocs serve
 ```
 
-The TensorBoard interface will show:
-- **Training metrics**: Loss, rewards, episode length
-- **Evaluation results**: Mean/std evaluation rewards
-- **Model architecture**: Network graph visualization
-- **Hyperparameters**: Complete configuration tracking
-- **Weight histograms**: Network parameter distributions
+### API Documentation
 
-### Training an Algorithm (Legacy Mode)
+The API documentation is automatically generated from docstrings and includes:
 
-For backward compatibility, you can still use the traditional argparse interface:
+- Complete algorithm implementations
+- Network architectures
+- Utility functions
+- Environment wrappers
+- Examples and usage patterns
+
+## 🛠 Development
+
+### Installing for Development
 
 ```bash
-# Train DQN on Pong (legacy mode)
-python train.py --use_argparse --algorithm dqn --env PongNoFrameskip-v4 --episodes 1000
-
-# Train PPO on Breakout (legacy mode)
-python train.py --use_argparse --algorithm ppo --env BreakoutNoFrameskip-v4 --episodes 2000
-
-# Train with custom parameters (legacy mode)
-python train.py --use_argparse --algorithm a2c --env PongNoFrameskip-v4 --episodes 1500 --eval_freq 50 --save_freq 100
+git clone https://github.com/yourusername/toyrl.git
+cd toyrl
+pip install -e ".[dev,docs]"
 ```
 
-## ⚙️ Configuration Management
-
-### Hydra Configuration Structure
-
-The configuration is organized hierarchically:
-
-```yaml
-# configs/trainer.yaml (main config)
-defaults:
-  - algorithm: dqn
-  - env: atari
-
-seed: 42
-episodes: 1000
-log_dir: "runs"
-tensorboard:
-  log_interval: 10
-  log_histograms: true
-  log_model_graph: true
-```
-
-### Algorithm-Specific Configs
-
-Each algorithm has its own configuration file with hyperparameters:
-
-```yaml
-# configs/algorithm/dqn.yaml
-algorithm_name: "dqn"
-dqn:
-  learning_rate: 0.0001
-  batch_size: 32
-  buffer_size: 100000
-  target_update_freq: 1000
-  exploration_initial_eps: 1.0
-  exploration_final_eps: 0.01
-```
-
-### Environment Configs
-
-Environment settings are also configurable:
-
-```yaml
-# configs/env/atari.yaml
-env_name: "PongNoFrameskip-v4"
-env:
-  frame_skip: 4
-  screen_size: 84
-  clip_rewards: true
-  frame_stack: 4
-```
-
-## 🎮 Inference and Model Evaluation
-
-Once you have trained models, you can run inference and create visualizations:
-
-### Basic Inference
-
-Load and run trained models:
+### Running Tests
 
 ```bash
-# Run trained DQN model
-python inference.py model.checkpoint_path=models/dqn_best.pth
-
-# Run with different algorithm configuration
-python inference.py algorithm=ppo model.checkpoint_path=models/ppo_best.pth
-
-# Run custom number of episodes
-python inference.py model.checkpoint_path=models/a2c_best.pth \
-    inference.num_episodes=10 inference.max_steps_per_episode=1000
-
-# Disable rendering for faster inference
-python inference.py model.checkpoint_path=models/dqn_best.pth \
-    inference.render=false
+python -c "import toyrl; print('ToyRL version:', toyrl.__version__)"
+python -c "from toyrl.algorithms import SAC, DQN; print('Algorithms imported successfully')"
 ```
 
-### 🎬 GIF Recording
-
-Record episodes as animated GIFs to visualize agent behavior:
+### Building Documentation
 
 ```bash
-# Record all episodes
-python inference.py model.checkpoint_path=models/dqn_best.pth \
-    recording.enabled=true recording.record_episodes=all
-
-# Record every 3rd episode
-python inference.py model.checkpoint_path=models/ppo_best.pth \
-    recording.enabled=true recording.record_episodes=every_n \
-    recording.record_params.n=3
-
-# Record specific episodes
-python inference.py model.checkpoint_path=models/a2c_best.pth \
-    recording.enabled=true recording.record_episodes=specific \
-    recording.record_params.episodes=[1,5,10]
-
-# Custom GIF settings
-python inference.py model.checkpoint_path=models/dqn_best.pth \
-    recording.enabled=true recording.fps=20 \
-    recording.resize=[640,480] recording.quality=90
+make docs          # Build Sphinx docs
+make docs-serve    # Serve docs locally
+make docs-clean    # Clean documentation build
 ```
 
-### Statistics and Results
-
-The inference script automatically computes and saves detailed statistics:
-
-- Mean, std, min, max rewards
-- Episode lengths and success rates  
-- Full episode-by-episode results
-- Configurable result saving to JSON
-
-### Advanced Usage
-
-#### Multi-Run Experiments
-
-Run multiple experiments with different hyperparameters:
+### Cleaning Build Artifacts
 
 ```bash
-# Run with multiple learning rates
-python train.py -m dqn.learning_rate=1e-3,1e-4,5e-4
-
-# Run on multiple environments
-python train.py -m env_name=PongNoFrameskip-v4,BreakoutNoFrameskip-v4
-
-# Grid search
-python train.py -m dqn.learning_rate=1e-3,1e-4 episodes=500,1000
+make clean
 ```
 
-### Training Parameters (Legacy Mode)
+## 📋 Requirements
 
-For backward compatibility with `--use_argparse`:
+- Python 3.9+
+- PyTorch 1.9+
+- Gymnasium
+- NumPy
+- Matplotlib
+- TensorBoard
 
-- `--algorithm`: Choose from {dqn, double_dqn, dueling_dqn, dueling_double_dqn, reinforce, actor_critic, a2c, ppo, trpo, sac}
-- `--env`: Atari environment name (e.g., PongNoFrameskip-v4, BreakoutNoFrameskip-v4)
-- `--episodes`: Number of training episodes (default: 1000)
-- `--seed`: Random seed for reproducibility (default: 42)
-- `--eval_freq`: Evaluation frequency in episodes (default: 100)
-- `--save_dir`: Directory to save models (default: models)
-- `--log_dir`: Directory to save logs and plots (default: logs)
+See `pyproject.toml` for complete dependency list.
 
-### Example Training Commands
+## 🎮 Usage Examples
 
-```bash
-# Modern Hydra approach
-python train.py algorithm=dqn env_name=PongNoFrameskip-v4 episodes=100
-
-# With TensorBoard monitoring
-python train.py algorithm=ppo env_name=BreakoutNoFrameskip-v4 episodes=2000 eval_freq=100
-
-# Legacy approach with argparse
-python train.py --use_argparse --algorithm dqn --env PongNoFrameskip-v4 --episodes 100
-
-# Compare algorithms (modern approach)
-python train.py algorithm=dqn env_name=PongNoFrameskip-v4 episodes=1000 seed=42
-python train.py algorithm=ppo env_name=PongNoFrameskip-v4 episodes=1000 seed=42
-```
-
-## 🧪 Testing
-
-Run the test suite to verify all algorithms and new features work correctly:
-
-```bash
-# Test all algorithms
-python tests/test_algorithms.py
-
-# Test Hydra and TensorBoard integration
-python tests/test_hydra_tensorboard.py
-
-# Quick integration test (10 steps training)
-python train.py algorithm=dqn env_name=PongNoFrameskip-v4 episodes=1 max_steps=10
-```
-
-The test suite will:
-- ✅ Test environment creation and basic operations
-- ✅ Test shared components (networks, replay buffers, utilities)
-- ✅ Test each algorithm's instantiation and basic operations
-- ✅ Test model saving and loading for each algorithm
-- ✅ Test Hydra configuration loading and composition
-- ✅ Test TensorBoard logger functionality
-- ✅ Test backward compatibility with argparse
-- ✅ Verify TensorBoard event file generation
-
-## 📊 Expected Performance
-
-Performance varies by algorithm and environment. Here are typical results after sufficient training:
-
-| Algorithm | Pong | Breakout | Training Time | Sample Efficiency |
-|-----------|------|----------|---------------|-------------------|
-| DQN | ~18-20 | ~400-500 | Medium | Medium |
-| Double DQN | ~19-21 | ~450-550 | Medium | Medium+ |
-| Dueling DQN | ~19-21 | ~500-600 | Medium | Medium+ |
-| PPO | ~20-21 | ~400-500 | Fast | High |
-| A2C | ~18-20 | ~350-450 | Fast | Medium |
-| SAC | ~19-21 | ~450-550 | Medium | High |
-
-*Note: Results may vary based on hyperparameters, training duration, and random seeds.*
-
-## 🔧 Customization
-
-### Adding New Algorithms
-
-1. Create a new file in the `algorithms/` directory
-2. Implement the algorithm class with required methods:
-   - `__init__()`: Initialize networks and hyperparameters
-   - `select_action()`: Action selection logic
-   - `train_step()` or `update()`: Learning update
-   - `save_model()` and `load_model()`: Model persistence
-
-3. Add imports to `train.py` and update the `create_agent()` function
-
-### Modifying Hyperparameters
-
-Each algorithm has configurable hyperparameters in its constructor. You can modify them when creating agents:
+### Basic Algorithm Training
 
 ```python
-from algorithms.dqn import DQN
+import toyrl
+from toyrl.algorithms import DQN, PPO, SAC
+from toyrl.common import make_atari_env, ReplayBuffer
 
-# Custom DQN with different hyperparameters
-agent = DQN(
-    state_shape=(4, 84, 84),
-    num_actions=6,
-    lr=1e-4,  # Lower learning rate
-    gamma=0.95,  # Different discount factor
-    epsilon_decay=500000,  # Faster epsilon decay
-    memory_size=500000,  # Smaller replay buffer
-    batch_size=64  # Larger batch size
+# Create environment
+env = make_atari_env('PongNoFrameskip-v4')
+
+# DQN Example
+dqn_agent = DQN(
+    state_shape=env.observation_space.shape,
+    num_actions=env.action_space.n,
+    lr=1e-4,
+    epsilon_decay=500000
+)
+
+# PPO Example  
+ppo_agent = PPO(
+    state_dim=env.observation_space.shape,
+    action_dim=env.action_space.n,
+    lr=3e-4
+)
+
+# SAC Example (for continuous control)
+sac_agent = SAC(
+    state_dim=env.observation_space.shape[0],
+    action_dim=env.action_space.shape[0], 
+    lr=3e-4
 )
 ```
 
-### Using Different Environments
+### Using Shared Components
 
-The library works with any Atari environment. Popular choices include:
+```python
+from toyrl.common import (
+    ReplayBuffer, 
+    DQNNetwork, 
+    ContinuousActorNetwork,
+    get_device,
+    make_atari_env
+)
 
-- **PongNoFrameskip-v4**: Simple two-player game, good for testing
-- **BreakoutNoFrameskip-v4**: Classic brick-breaking game
-- **SpaceInvadersNoFrameskip-v4**: Space shooter game
-- **QbertNoFrameskip-v4**: Platform puzzle game
-- **SeaquestNoFrameskip-v4**: Underwater adventure game
+# Create replay buffer
+buffer = ReplayBuffer(capacity=100000)
 
-## 📈 Monitoring Training
+# Create networks
+device = get_device()
+q_network = DQNNetwork(input_shape=(4, 84, 84), num_actions=6).to(device)
+actor_network = ContinuousActorNetwork(state_dim=8, action_dim=2).to(device)
 
-Training progress is automatically logged and can be monitored through:
-
-1. **Console Output**: Real-time episode rewards and evaluation results
-2. **Saved Metrics**: NumPy files with detailed training metrics
-3. **Training Plots**: Automatically generated reward curves
-4. **Model Checkpoints**: Periodic model saves for resuming training
-
-### Log Files Structure
-
-```
-logs/
-├── dqn_metrics.npy           # Training metrics
-├── dqn_training_curves.png   # Reward plots
-└── ...
-
-models/
-├── dqn_best.pth             # Best performing model
-├── dqn_final.pth            # Final model
-├── dqn_episode_200.pth      # Periodic checkpoints
-└── ...
+# Environment with preprocessing
+env = make_atari_env('BreakoutNoFrameskip-v4', frame_stack=4)
 ```
 
-## 🐛 Troubleshooting
+### Custom Training Loop
 
-### Common Issues
+```python
+import toyrl
+from toyrl.algorithms import DQN
+from toyrl.common import make_atari_env
 
-1. **CUDA Out of Memory**
-   - Reduce batch size in algorithm constructors
-   - Use smaller networks or replay buffers
-   - Add `torch.cuda.empty_cache()` periodically
+# Setup
+env = make_atari_env('PongNoFrameskip-v4')
+agent = DQN(state_shape=env.observation_space.shape, num_actions=env.action_space.n)
 
-2. **Slow Training**
-   - Ensure CUDA is available and being used
-   - Consider using smaller environments for testing
-   - Reduce evaluation frequency during training
-
-3. **Poor Performance**
-   - Check hyperparameters match literature recommendations
-   - Ensure environment preprocessing is correct
-   - Try different random seeds
-   - Increase training duration
-
-4. **Import Errors**
-   - Verify all dependencies are installed: `pip install -r requirements.txt`
-   - Check Python path includes the project directory
-
-### Environment Issues
-
-If you encounter issues with Atari environments:
-
-```bash
-# Install additional dependencies
-pip install gymnasium[atari]
-pip install ale-py
-
-# Accept ROM license
-ale-import-roms --import-from-pkg atari_py.atari_roms
+# Training loop
+for episode in range(1000):
+    state, _ = env.reset()
+    episode_reward = 0
+    
+    while True:
+        action = agent.select_action(state)
+        next_state, reward, done, truncated, _ = env.step(action)
+        
+        agent.store_transition(state, action, reward, next_state, done)
+        agent.update()
+        
+        state = next_state
+        episode_reward += reward
+        
+        if done or truncated:
+            break
+    
+    print(f"Episode {episode}: Reward = {episode_reward}")
 ```
+
+## 🤖 GitHub Actions
+
+The project includes a GitHub Actions workflow for automatic documentation deployment:
+
+```yaml
+# .github/workflows/docs.yml
+name: Build and Deploy Documentation
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    - name: Install dependencies
+      run: |
+        pip install -e ".[docs]"
+    - name: Build docs
+      run: |
+        make docs
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs/_build/html
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Contribution Guidelines
+
+- Follow PEP 8 style guidelines
+- Add docstrings to all public functions and classes
+- Include tests for new features
+- Update documentation as needed
+- Use Google-style docstrings
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Contact
+
+- **GitHub**: [https://github.com/yourusername/toyrl](https://github.com/yourusername/toyrl)
+- **Documentation**: [API Documentation](docs/_build/html/index.html)
+
+## 🙏 Acknowledgments
+
+- OpenAI Gym/Gymnasium for the environment interface
+- PyTorch team for the deep learning framework
+- The reinforcement learning community for algorithm implementations and insights
+- Sphinx team for the documentation framework
+- All contributors to this project
 
 ## 📚 References
 
@@ -495,27 +348,6 @@ ale-import-roms --import-from-pkg atari_py.atari_roms
 6. Schulman, J., et al. "Trust region policy optimization." ICML 2015.
 7. Schulman, J., et al. "Proximal policy optimization algorithms." arXiv preprint arXiv:1707.06347 (2017).
 8. Haarnoja, T., et al. "Soft actor-critic: Off-policy maximum entropy deep reinforcement learning with a stochastic actor." ICML 2018.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new algorithms
-4. Update documentation
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License. See LICENSE file for details.
-
-## 🙏 Acknowledgments
-
-- OpenAI Gym/Gymnasium team for the Atari environments
-- PyTorch team for the deep learning framework
-- Original algorithm authors for their groundbreaking research
-- Open source RL community for implementations and insights
 
 ---
 
